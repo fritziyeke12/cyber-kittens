@@ -1,8 +1,8 @@
+require("dotenv").config();
 const request = require('supertest');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-process.env.JWT_SECRET = 'neverTell';
 const SALT_COUNT = 10;
 const {JWT_SECRET} = process.env;
 
@@ -120,13 +120,13 @@ describe('Endpoints', () => {
                 expect(response.status).toBe(401);
                 expect(response.text).toBe('Unauthorized');
             });
-            it('should return 401 if kitten not owned by user', async () => {
+            it('should return 403 if kitten not owned by user', async () => {
                 const {token, user} = await createTestUser({username: 'notbuster', password: 'notbustthis'});
                 const response = await request(app)
                     .get(`/kittens/${kitten.id}`)
                     .set('Authorization', `Bearer ${token}`);
-                expect(response.status).toBe(401);
-                expect(response.text).toBe('Unauthorized');
+                expect(response.status).toBe(403);
+                expect(response.text).toBe('Forbidden');
             });
         });
         describe('POST /kittens', () => {
@@ -163,13 +163,13 @@ describe('Endpoints', () => {
                 expect(response.status).toBe(401);
                 expect(response.text).toBe('Unauthorized');
             });
-            it('should return 401 if kitten not owned by user', async () => {
+            it('should return 403 if kitten not owned by user', async () => {
                 const {token, user} = await createTestUser({username: 'notbuster', password: 'notbustthis'});
                 const response = await request(app)
                     .delete(`/kittens/${kitten.id}`)
                     .set('Authorization', `Bearer ${token}`);
-                expect(response.status).toBe(401);
-                expect(response.text).toBe('Unauthorized');
+                expect(response.status).toBe(403);
+                expect(response.text).toBe('Forbidden');
             });
         });
     });
